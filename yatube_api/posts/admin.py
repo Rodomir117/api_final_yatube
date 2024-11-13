@@ -1,3 +1,39 @@
 from django.contrib import admin
 
-# Register your models here.
+from posts.models import Comment, Follow, Group, Post
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'text', 'pub_date', 'author', 'group')
+    search_fields = ('text',)
+    list_filter = ('pub_date',)
+
+
+class PostInline(admin.TabularInline):
+    model = Post
+    extra = 0
+    ordering = ('text',)
+
+
+@admin.register(Group)
+class GroupAdmin(admin.ModelAdmin):
+    inlines = (PostInline,)
+    ordering = ('title',)
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('post', 'text', 'author')
+    ordering = ('text',)
+    search_fields = ('created', 'text')
+
+
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ('user', 'following')
+    ordering = ('user',)
+    search_fields = ('user', 'following')
+
+
+admin.site.empty_value_display = '-пусто-'
